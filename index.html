@@ -309,7 +309,7 @@
         L.control.zoom({ position: 'bottomright' }).addTo(map);
 
         const bounds = [[0, 0], [800, 1000]];
-        const image = L.imageOverlay('ground_map1.jpg', bounds).addTo(map);
+        const image = L.imageOverlay('GROUND MAP1.jpg', bounds).addTo(map);
         map.fitBounds(bounds);
         
         function toggleMenu() {
@@ -698,7 +698,7 @@
 
 
 // Function to show the video popup
-f// Function to show the video popup as a fixed modal
+// Function to show the video popup as a fixed modal
 function showVideoPopup() {
     // Check if a video modal already exists, remove it to avoid duplicates
     let existingPopup = document.getElementById('video-popup');
@@ -719,7 +719,7 @@ function showVideoPopup() {
 
     // Add content to the modal
     videoPopup.innerHTML = `
-        <h3 style="margin-top: 0;">GROUND Floor</h3>
+        <h3 style="margin-top: 0;">Ground Floor</h3>
         <video width="320" height="240" controls>
             <source src="VEDIO/FIRSTFLOORVIDEO.mp4" type="video/mp4">
             Your browser does not support the video tag.
