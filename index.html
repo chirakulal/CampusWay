@@ -309,7 +309,7 @@
         L.control.zoom({ position: 'bottomright' }).addTo(map);
 
         const bounds = [[0, 0], [800, 1000]];
-        const image = L.imageOverlay('ground_map1.jpg', bounds).addTo(map);
+        const image = L.imageOverlay('GROUND MAP1.jpg', bounds).addTo(map);
         map.fitBounds(bounds);
         
         function toggleMenu() {
@@ -617,7 +617,7 @@
     }
     return [];
  } // Return empty if no path found
-  function findRoute() {
+ function findRoute() {
     // Close the menu bar explicitly
     const sidebar = document.querySelector('.sidebar');
     if (sidebar.style.display === 'block' || sidebar.style.display === '') {
