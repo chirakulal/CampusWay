@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Campus Way Navigation</title>
+  <link rel="stylesheet" href="pro.css">
+</head>
+<body>
+  <div class="container">
+    <!-- Header Section -->
+    <div class="header">
+      <h1><b>Welcome to Campus Way QR Code-Driven Indoor Navigation Solution!</b></h1>
+    </div>
+
+    <!-- Content Section -->
+    <div class="content">
+      <img src="imagee.jpg" alt="Campus Aerial View" class="campus-image">
+      <div class="text-box">
+        <p>
+          We are excited to guide you through our campus with ease and convenience.<br>
+          Simply scan the QR codes placed throughout the campus to access detailed, step-by-step pathfinding instructions to guide you to your destination.
+        </p>
+        <p><b>No more getting lost—Campus Way ensures you’ll always find your way!</b></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- About Us Section -->
+  <h1 class="blink" onclick="openAboutUs()">About Us</h1>
+
+  <button class="bounce" onclick="openHelp()">Help</button>
+
+  <!-- Full-Screen Modal for Help Content -->
+  <div id="helpModal" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="closeModal()">&times;</span>
+      <img src="helpy.png" alt="Help Image" class="help-image">
+    </div>
+  </div>
+
+  <script src="pro.js"></script>
+
+  <script>
+    // Function to open About Us page
+    function openAboutUs() {
+      window.location.href = "Demo.html";  // Use a relative path for files in the same directory
+    }
+
+    // Function to open Help modal
+    function openHelp() {
+      document.getElementById("helpModal").style.display = "block";
+    }
+
+    // Function to close Help modal
+    function closeModal() {
+      document.getElementById("helpModal").style.display = "none";
+    }
+  </script>
+</body>
+</html>

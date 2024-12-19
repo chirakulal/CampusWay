@@ -1,0 +1,163 @@
+/* General Reset */
+body, html {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: Arial, sans-serif;
+  background-color: #0b112d; /* Dark blue background */
+  color: #ffffff; /* White text */
+}
+
+.container {
+  text-align: center;
+  padding: 0;
+}
+
+/* Header Styles */
+.header {
+  background-color: #164d64; /* Teal blue header background */
+  padding: 20px 0;
+  border: 3px solid #00364d;
+}
+
+.header h1 {
+  margin: 0;
+  font-size: 26px;
+  color: #ffffff;
+}
+
+/* Content Section */
+.content {
+  position: relative;
+  display: inline-block;
+  margin: 20px auto;
+  font-family: 'Lucida Console', Monaco, monospace;
+  text-align:justify;
+}
+
+.campus-image {
+  width: 100%;
+  max-width: 1200px;
+  border-radius: 0;
+}
+
+/* Text Box Styles */
+.text-box {
+  position: absolute;
+  top: 0;                  /* Position the box at the top */
+  left: 0;                 /* Position the box at the left */
+  background-color: rgba(44, 62, 80, 0.9); /* Semi-transparent dark grey */
+  color: #ffffff;
+  padding: 20px 30px;
+  border-radius: 0px;
+  width: 100%;             /* Make the box cover the full width of the screen */
+  height: 20%;            /* Make the box cover the full height of the screen */
+  border: 3px solid #00364d; /* Blue frame around the text */
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+  box-sizing: border-box;  /* Include border in width/height calculation */
+}
+
+
+.text-box p {
+  margin: 10px 0;
+  font-size: 18px;
+  line-height: 1.6;
+}
+@keyframes blink {
+  0% {
+    opacity: 1; /* Fully visible */
+  }
+  50% {
+    opacity: 0; /* Completely invisible */
+  }
+  100% {
+    opacity: 1; /* Fully visible again */
+  }
+}
+
+/* Apply the animation to the text */
+.blink {
+  animation: blink 1s infinite; /* Blink every 1 second infinitely */
+  position: absolute;  /* Position it absolutely */
+  top: 0;              /* Align it to the top */
+  left: 10px;             /* Align it to the left */
+  font-size: 24px;     /* Adjust font size as needed */
+  color: white;      /* Optional: Set text color */
+}
+/* Button Style */
+
+
+/* Button Style */
+.bounce {
+  position: absolute; /* Position the button absolutely */
+  top: 20px; /* Position the button 20px from the top of the page */
+  right: 10px; /* Position the button 10px from the right of the page */
+  padding: 10px 20px;
+  font-size: 18px;
+  background-color: #4CAF50; /* Green color */
+  color: white; /* White text */
+  border: none;
+  border-radius: 5px; /* Rounded corners */
+  cursor: pointer;
+  animation: bounce 1s infinite; /* Apply bounce animation */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Add shadow for button effect */
+  transition: background-color 0.3s; /* Smooth background color transition */
+}
+
+/* Hover Effect */
+.bounce:hover {
+  background-color: #45a049; /* Darker green when hovered */
+}
+
+/* Bounce Animation */
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+/* Full-Screen Modal Style */
+.modal {
+  display: none; /* Hidden by default */
+  position: fixed;
+  z-index: 1;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.9); /* Dark background with transparency */
+}
+
+/* Modal Content */
+.modal-content {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center; /* Center the image horizontally */
+  align-items: center; /* Center the image vertically */
+}
+
+/* Image Style */
+.help-image {
+  width: 100%;
+  height: 100%;
+  object-fit: contain; /* Ensure the image scales appropriately */
+}
+
+/* The Close Button */
+.close {
+  color: #fff;
+  font-size: 36px;
+  font-weight: bold;
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  cursor: pointer;
+}
+
+.close:hover,
+.close:focus {
+  color: #ff6347;
+  text-decoration: none;
+}
+
