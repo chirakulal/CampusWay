@@ -78,15 +78,6 @@
 }
 
 
-        .compass {
-            font-size: 0.9rem;
-            color: #28a745;
-            padding: 5px;
-            border: 1px solid #d4d4d4;
-            border-radius: 5px;
-            text-align: center;
-            background-color: #e9f7ec;
-        }
 
         /* Map Styling */
         #map {
@@ -273,7 +264,7 @@
                     <option value="" disabled selected>Select location...</option>
                 </select>
                 <button onclick="findRoute()">Find Route</button>
-                <div class="compass" id="compass">Compass inactive</div>
+                
             </div>
             <div class="menu-bar">
             <!-- Menu Icon -->
@@ -545,19 +536,7 @@
             let option2 = option.cloneNode(true);
             document.getElementById('destination').appendChild(option2);
         }
-        if (window.DeviceOrientationEvent) {
-            const compass = document.getElementById('compass');
-            window.addEventListener('deviceorientation', (event) => {
-                if (event.alpha !== null) {
-                    const heading = 360 - event.alpha; // Adjust to make it more intuitive (0° = North)
-                    compass.textContent = `Compass active - Heading: ${heading.toFixed(2)}°`;
-                } else {
-                    compass.textContent = 'Compass data not available.';
-                }
-            });
-        } else {
-            document.getElementById('compass').textContent = 'Compass not supported on this device.';
-        }
+      
 
 
         var currentPolyline = null;
