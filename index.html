@@ -617,7 +617,13 @@
     }
     return [];
  } // Return empty if no path found
- function findRoute() {
+  function findRoute() {
+    // Close the menu bar explicitly
+    const sidebar = document.querySelector('.sidebar');
+    if (sidebar.style.display === 'block' || sidebar.style.display === '') {
+        sidebar.style.display = 'none';
+    }
+
     // Clear existing elements (Polyline, Markers, etc.)
     if (currentPolyline) map.removeLayer(currentPolyline);
     if (sourceMarker) map.removeLayer(sourceMarker);
@@ -689,6 +695,7 @@
     // Animate marker along the route
     animateMarker(latlngs);
 }
+
 
 // Function to show the video popup
 f// Function to show the video popup as a fixed modal
