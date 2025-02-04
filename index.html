@@ -698,16 +698,15 @@ function showVideoPopup() {
 
     // Add content to the modal
     videoPopup.innerHTML = `
-        <h3 style="margin-top: 0;">Ground Floor</h3>
-        <video width="320" height="240" controls>
+        <h3 style="margin-top: 0; font-size: 1.2rem;">GROUND Floor</h3>
+        <video width="100%" controls style="border-radius: 8px;">
             <source src="VEDIO/FIRSTFLOORVIDEO.mp4" type="video/mp4">
             Your browser does not support the video tag.
         </video>
-        <p>Watch the video for a better experience.</p>
-        <button style="margin-top: 10px; padding: 5px 10px; cursor: pointer;" onclick="closeVideoPopup()">Close</button>
+        <p style="font-size: 0.9rem; margin-top: 10px;">Watch the video for a better experience.</p>
+        <button style="margin-top: 10px; padding: 10px; width: 100%; font-size: 1rem; border: none; border-radius: 5px; background-color: #007bff; color: white; cursor: pointer;" onclick="closeVideoPopup()">Close</button>
     `;
 
-    // Append the modal to the body
     document.body.appendChild(videoPopup);
 }
 
