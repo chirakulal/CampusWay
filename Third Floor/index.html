@@ -1,0 +1,735 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Indoor Navigation</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css" />
+    <style>
+        /* General Body Styling */
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%; /* Full viewport height */
+            font-family: Arial, sans-serif;
+            font-family: 'Roboto', Arial, sans-serif;
+            font-size: 16px;
+            color: #343a40;
+        }
+
+        .container {
+    display: flex;
+    flex-direction: row;
+    height: 100vh;
+}
+
+@media (max-width: 768px) {
+    .container {
+        flex-direction: column; /* Stack sidebar and map vertically on smaller screens */
+    }
+}
+
+
+        /* Sidebar Styling */
+        .sidebar {
+    background: #f8f9fa; /* Light grey background */
+    border-right: 1px solid #ddd; /* Subtle border */
+    padding: 20px;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+}
+
+.sidebar h2 {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #343a40; /* Darker text color */
+    margin-bottom: 20px;
+}
+
+.sidebar label {
+    display: block;
+    font-size: 1rem;
+    font-weight: 500;
+    margin-bottom: 8px;
+    color: #495057;
+}
+
+.sidebar select, .sidebar button {
+    width: 100%;
+    margin-bottom: 15px;
+    padding: 12px;
+    border: 1px solid #ced4da;
+    border-radius: 5px;
+    font-size: 1rem;
+    color: #495057;
+    background-color: #fff;
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.sidebar button {
+    background-color: #007bff; /* Blue color */
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.sidebar button:hover {
+    background-color: #0056b3;
+}
+/* Menu Bar Styles */
+.menu-bar {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    z-index: 10;
+  }
+
+  .menu-icon {
+    font-size: 24px;
+    cursor: pointer;
+  }
+
+  .menu-dropdown {
+    display: none;
+    position: absolute;
+    top: 30px;
+    left: 0;
+    background-color: #f9f9f9;
+    box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
+    z-index: 1;
+  }
+
+  .menu-dropdown a {
+    color: black;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+  }
+
+  .menu-dropdown a:hover {
+    background-color: #ddd;
+  }
+        /* Toggle Sidebar Button */
+        #toggleSidebar {
+            background: #007bff;
+            color: #fff;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            font-size: 1rem;
+            cursor: pointer;
+            box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+            transition: background-color 0.3s ease;
+        }
+
+        #toggleSidebar:hover {
+            background: #0056b3;
+        }
+
+
+        .compass {
+            font-size: 0.9rem;
+            color: #28a745;
+            padding: 5px;
+            border: 1px solid #d4d4d4;
+            border-radius: 5px;
+            text-align: center;
+            background-color: #e9f7ec;
+        }
+
+        /* Map Styling */
+        #map {
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);/* Fallback background before map loads */
+        }
+        .instruction-box {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: rgba(0, 0, 0, 0.9);
+            color: #fff;
+            padding: 15px 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+            z-index: 1000;
+            font-size: 16px;
+            text-align: center;
+            animation: fadeIn 0.5s ease;
+        }
+
+
+        /* Fade-in Animation for Instruction Box */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateX(-50%) translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(-50%);
+            }
+        }
+
+        /* Responsive Adjustments */
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 90%;
+                font-size: 12px;
+            }
+        }
+        /* For tablets and smaller screens */
+@media (max-width: 1024px) {
+    .container {
+        flex-direction: column; /* Stack sidebar and map vertically */
+    }
+
+    .sidebar {
+        width: 100%; /* Full width on smaller screens */
+        height: auto; /* Auto height to fit content */
+        padding: 10px;
+    }
+
+    #map {
+        height: calc(100vh - 250px); /* Remaining height for the map */
+    }
+
+    .instruction-box {
+        font-size: 14px;
+        padding: 10px 15px;
+    }
+}
+
+/* For mobile phones */
+@media (max-width: 768px) {
+    .sidebar h2 {
+        font-size: 1.2rem; /* Smaller font size for the title */
+    }
+
+    .sidebar select, .sidebar button {
+        font-size: 0.9rem; /* Smaller font size for inputs/buttons */
+    }
+
+    .instruction-box {
+        font-size: 12px;
+        padding: 8px 12px;
+    }
+}
+#map {
+    flex-grow: 1;
+    height: 100%; /* This ensures it takes the available space */
+}
+
+@media (max-width: 768px) {
+    #map {
+        height: calc(100vh - 300px); /* Adjust map height for smaller devices */
+    }
+}
+#toggleSidebar {
+    background: #007bff;
+    color: #fff;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    font-size: 1rem;
+    cursor: pointer;
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+    transition: background-color 0.3s ease;
+}
+
+#toggleSidebar:hover {
+    background: #0056b3;
+}
+.leaflet-popup-content-wrapper {
+    background: #f8f9fa;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.leaflet-popup-tip {
+    background: #f8f9fa;
+}
+
+
+    </style>
+</head>
+<body>
+    <body>
+        <div class="container">
+            <!-- Toggle button for mobile -->
+            <button id="toggleSidebar">☰ Menu</button>
+            <div class="menu-bar">
+                <!-- Menu Icon -->
+                <span class="menu-icon" onclick="toggleMenu()">&#9776;</span>
+                <!-- Dropdown Menu -->
+                <div id="dropdownMenu" class="menu-dropdown">
+                  
+                  <a href="proooo/pro.html">About</a>
+                  <a href="proooo/Demo.html">Community</a>
+                  <a href="Firstfloor/index.html">FirstFloor</a>
+                  <a href="Second_floor/index.html">SecondFloor</a>
+                 
+                  
+                </div>
+              </div>
+    
+            <!-- Sidebar -->
+            <div class="sidebar">
+                <h2>Indoor Navigation</h2>
+                <label for="source">Source</label>
+                <select id="source">
+                <option value="" disabled selected>Select location...</option>                    
+                </select>
+                <label for="destination">Destination</label>
+                <select id="destination">
+                    <option value="" disabled selected>Select location...</option>
+                </select>
+                <button onclick="findRoute()">Find Route</button>
+                <div class="compass" id="compass">Compass inactive</div>
+            </div>
+    
+            <!-- Map -->
+            <div id="map"></div>
+        </div>
+    
+        <!-- Instruction Box -->
+        <div id="instruction-box" class="instruction-box">
+            Select source and destination to begin navigation.
+        </div>
+    </body>
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script>
+        
+        // Initialize map
+        const map = L.map('map', {
+            crs: L.CRS.Simple,
+            minZoom: -1,
+            zoomControl: false
+        });
+        L.control.zoom({ position: 'bottomright' }).addTo(map);
+
+        const bounds = [[0, 0], [800, 1000]];
+        const image = L.imageOverlay('FLOOR_THIRD_FINAL[1].jpg', bounds).addTo(map);
+        map.fitBounds(bounds);
+        
+
+       
+        
+        var locations = {
+            
+            'LIFT': [2.9, 8.9],
+            'WATER': [5.5, 11.3],
+            'STAIRS': [4.0, 9.9],
+            'WASHROOM BOYS': [3.5, 11.4],
+            'WASHROOM GIRLS': [7.0, 11.4],
+            'LH 301': [10.9, 7.3],
+            'LH 302': [13.1, 7.3],
+            'LH 303': [16.5, 7.8],
+            'LH 304': [16.5, 10.3],
+            'LH 305': [16.5, 10.8],
+            'LH 306': [16.4, 13.0],
+            'LH 307': [11.8, 11.6],
+            'SKILL LAB': [13.1, 17.0],
+            'STAFF ROOM': [10.1, 10.0],
+            
+            
+        };
+
+        const locationImages = {
+    'LH 301': 'images/LH_301.png',
+   'LH 302': 'images/LH_302.png',
+            'LH 307': 'images/LH_307.png',
+            'LH 303': 'images/LH303.png',
+            'LH 304': 'images/LH304.png',
+            'LH 305': 'images/LH305.png',
+            'LH 306': 'images/LH306.png',
+            'STAFF ROOM': 'images/STAFFROOM',
+           
+            'SKILL LAB': 'images/SKILLLAB.png',
+            
+};
+
+
+        var junctions = {
+            'j1': [2.9, 9.9],
+            'j2': [2.9, 10.6],
+            'j3': [3.5, 10.6 ],
+            'j4': [5.5, 10.6],
+            'j5': [7.0, 10.6],
+            'j6': [10.1, 10.6],
+            'j7':[13.1, 10.6],
+            'j8':[16.2,10.6 ],
+            'j9':[16.2, 10.8],
+            'j10':[16.2, 10.3],
+            'j11':[13.1, 7.8],
+            'j12':[10.9, 7.8],
+            'j13':[13.1, 11.6],
+            'j14':[13.1, 13.0],
+            'j15':[3.6,9.9],
+            'j16':[14.4,7.8],
+            'j17':[14.3,13.0],
+
+
+
+            
+
+            
+            
+        };
+
+        var connections = {
+            'j1': ['j2','j15'],
+            'j2': ['j1', 'j3'],
+            'j3': ['j2', 'j4'],
+            'j4': ['j3', 'j5'],
+            'j5': ['j4', 'j6'],
+            'j6': ['j5', 'j7'],
+            'j7': ['j6', 'j13','j11','j8'],
+            'j8': ['j7', 'j10', 'j9'],
+            'j9': [ 'j8',],
+            'j10': [  'j8'],
+            'j11': ['j7','j12','j16'],
+            'j12': ['j11'],
+            'j13':['j7','j14'],
+            'j14':['j13','j17'],
+            'j15':['j1'],
+            'j16':['j11'],
+            'j17':['j14'],
+
+
+            
+            
+            
+            };
+            function toggleMenu() {
+                const menu = document.getElementById('dropdownMenu');
+                menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
+              }
+        
+    document.addEventListener('DOMContentLoaded', function() {
+        const element = document.getElementById('source');
+        const choices = new Choices(element, {
+            searchEnabled: true,
+            placeholderValue: "Select location...",
+        });
+    });
+
+
+        document.getElementById('toggleSidebar').addEventListener('click', () => {
+    const sidebar = document.querySelector('.sidebar');
+    sidebar.style.display = sidebar.style.display === 'none' ? 'block' : 'none';
+});
+
+        function toCoords(loc) {
+            return [loc[0] * 40, loc[1] * 40];
+        }
+
+        var junctionIcon = L.icon({
+            iconUrl: 'junction.png',
+            iconSize: [0, 0],
+        });
+
+        for (var junc in junctions) {
+            var coords = toCoords(junctions[junc]);
+            L.marker(coords, { icon: junctionIcon }).addTo(map).bindPopup(junc);
+        }
+
+       
+        for (let loc in locations) {
+            let option = document.createElement('option');
+            option.value = loc;
+            option.textContent = loc;
+            document.getElementById('source').appendChild(option);
+
+            let option2 = option.cloneNode(true);
+            document.getElementById('destination').appendChild(option2);
+        }
+        if (window.DeviceOrientationEvent) {
+            const compass = document.getElementById('compass');
+            window.addEventListener('deviceorientation', (event) => {
+                if (event.alpha !== null) {
+                    const heading = 360 - event.alpha; // Adjust to make it more intuitive (0° = North)
+                    compass.textContent = `Compass active - Heading: ${heading.toFixed(2)}°`;
+                } else {
+                    compass.textContent = 'Compass data not available.';
+                }
+            });
+        } else {
+            document.getElementById('compass').textContent = 'Compass not supported on this device.';
+        }
+
+
+        var currentPolyline = null;
+        var sourceMarker = null;
+        var destinationMarker = null;
+        var movingMarker = null;
+
+        function heuristic(a, b) {
+            return Math.sqrt(Math.pow(junctions[a][0] - junctions[b][0], 2) + Math.pow(junctions[a][1] - junctions[b][1], 2));
+        }
+
+        function calculatePathAStar(start, end) {
+    let openSet = [start];
+    let cameFrom = {};
+    let gScore = {};
+    let fScore = {};
+
+    // Initialize scores for all junctions
+    for (let junc in junctions) {
+        gScore[junc] = Infinity;
+        fScore[junc] = Infinity;
+    }
+    gScore[start] = 0;
+    fScore[start] = heuristic(start, end);
+
+    while (openSet.length > 0) {
+        // Sort openSet by fScore to find the junction with the lowest cost to expand
+        openSet.sort((a, b) => fScore[a] - fScore[b]);
+        let current = openSet.shift();
+
+        // If we reach the destination, reconstruct the path
+        if (current === end) {
+            let path = [];
+            while (current in cameFrom) {
+                path.push(current);
+                current = cameFrom[current];
+            }
+            path.push(start);
+            return path.reverse();
+        }
+
+        // Iterate over each neighboring junction
+        for (let neighbor of connections[current] || []) {
+            let tentative_gScore = gScore[current] + heuristic(current, neighbor);
+
+            // Only update if this path is better than any previous one
+            if (tentative_gScore < gScore[neighbor]) {
+                cameFrom[neighbor] = current;
+                gScore[neighbor] = tentative_gScore;
+                fScore[neighbor] = gScore[neighbor] + heuristic(neighbor, end);
+
+                if (!openSet.includes(neighbor)) {
+                    openSet.push(neighbor);
+                }
+            }
+        }
+    }
+    return [];
+ } // Return empty if no path found
+ function findRoute() {
+    // Clear existing elements (Polyline, Markers, etc.)
+    if (currentPolyline) map.removeLayer(currentPolyline);
+    if (sourceMarker) map.removeLayer(sourceMarker);
+    if (destinationMarker) map.removeLayer(destinationMarker);
+    if (movingMarker) map.removeLayer(movingMarker);
+
+    // Get source and destination inputs
+    const sourceName = document.getElementById('source').value;
+    const destinationName = document.getElementById('destination').value;
+
+    // Validation: Ensure both source and destination are selected
+    if (!sourceName || !destinationName) {
+        document.getElementById('instruction-box').textContent =
+            'Please select both source and destination to find the route.';
+        return;
+    }
+
+    // Retrieve coordinates and images for the selected source and destination
+    const sourceCoords = locations[sourceName];
+    const destinationCoords = locations[destinationName];
+
+    const sourceImage = locationImages[sourceName] || 'images/default.png'; // Fallback image
+    const destinationImage = locationImages[destinationName] || 'images/default.png'; // Fallback image
+
+    // Add source marker with popup containing image
+    sourceMarker = L.marker(toCoords(sourceCoords))
+        .addTo(map)
+        .bindPopup(` 
+            <b>Source:</b> ${sourceName}<br>
+            <img src="${sourceImage}" alt="${sourceName} Image" width="150">
+        `);
+
+    // Add destination marker with popup containing image
+    destinationMarker = L.marker(toCoords(destinationCoords))
+        .addTo(map)
+        .bindPopup(`
+            <b>Destination:</b> ${destinationName}<br>
+            <img src="${destinationImage}" alt="${destinationName} Image" width="150">
+        `);
+
+    // Automatically open both popups
+    sourceMarker.openPopup();
+    destinationMarker.openPopup();
+
+    // Show video popup after route is found
+    showVideoPopup();
+
+    // Find the nearest junctions for the route
+    const nearestSourceJunction = findNearestJunction(sourceCoords);
+    const nearestDestinationJunction = findNearestJunction(destinationCoords);
+
+    // Calculate the path using A* algorithm
+    const path = calculatePathAStar(nearestSourceJunction, nearestDestinationJunction);
+
+    // Construct the route's lat/lng array
+    const latlngs = [toCoords(sourceCoords)];
+    path.forEach((junc) => latlngs.push(toCoords(junctions[junc])));
+    latlngs.push(toCoords(destinationCoords));
+
+    // Draw the route polyline on the map
+    currentPolyline = L.polyline(latlngs, { color: 'blue', weight: 4 }).addTo(map);
+
+    // Adjust map view to fit the route
+    map.fitBounds(L.latLngBounds(latlngs));
+
+    // Display navigation message
+    document.getElementById('instruction-box').textContent = 'Starting navigation...';
+
+    // Animate marker along the route
+    animateMarker(latlngs);
+}
+
+// Function to show the video popup
+f// Function to show the video popup as a fixed modal
+function showVideoPopup() {
+    // Check if a video modal already exists, remove it to avoid duplicates
+    let existingPopup = document.getElementById('video-popup');
+    if (existingPopup) existingPopup.remove();
+
+    // Create the modal container
+    const videoPopup = document.createElement('div');
+    videoPopup.id = 'video-popup';
+    videoPopup.style.position = 'fixed';
+    videoPopup.style.top = '20px';
+    videoPopup.style.right = '20px';
+    videoPopup.style.width = '350px';
+    videoPopup.style.backgroundColor = 'white';
+    videoPopup.style.boxShadow = '0 4px 8px rgba(0, 0, 0, 0.2)';
+    videoPopup.style.padding = '10px';
+    videoPopup.style.borderRadius = '8px';
+    videoPopup.style.zIndex = '1000';
+
+    // Add content to the modal
+    videoPopup.innerHTML = `
+        <h3 style="margin-top: 0;">Third Floor</h3>
+        <video width="320" height="240" controls>
+            <source src="301_302_303.mp4" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+        <p>Watch the video for a better experience.</p>
+        <button style="margin-top: 10px; padding: 5px 10px; cursor: pointer;" onclick="closeVideoPopup()">Close</button>
+    `;
+
+    // Append the modal to the body
+    document.body.appendChild(videoPopup);
+}
+
+// Function to close the video popup
+function closeVideoPopup() {
+    const popup = document.getElementById('video-popup');
+    if (popup) popup.remove();
+}
+        function findNearestJunction(coords) {
+            var minDist = Infinity, nearestJunction = null;
+            for (var junc in junctions) {
+                var juncCoords = junctions[junc];
+                var dist = Math.pow(juncCoords[0] - coords[0], 2) + Math.pow(juncCoords[1] - coords[1], 2);
+                if (dist < minDist) {
+                    minDist = dist;
+                    nearestJunction = junc;
+                }
+            }
+            return nearestJunction;
+        }
+        function animateMarker(latlngs) {
+    let index = 0;
+    movingMarker = L.marker(latlngs[index]).addTo(map);
+
+    // Instruction box for displaying navigation instructions
+    let instructionBox = document.getElementById('instruction-box');
+    instructionBox.style.display = 'block'; // Ensure it's visible
+    instructionBox.textContent = 'Start moving...';
+
+    let lastInstruction = '';
+
+    // Function to calculate angle between two points
+    function calculateAngle(pointA, pointB) {
+        const dy = pointB[0] - pointA[0];
+        const dx = pointB[1] - pointA[1];
+        let angle = Math.atan2(dy, dx) * (180 / Math.PI); // Convert radians to degrees
+        return (angle + 360) % 360; // Ensure angle is positive
+    }
+
+    // Function to determine movement direction
+    function getDirection(prevAngle, currentAngle) {
+        const delta = (currentAngle - prevAngle + 360) % 360; // Normalize angle difference
+        if (delta < 20 || delta > 340) return 'Go straight';
+        if (delta > 20 && delta < 160) return 'Turn right';
+        if (delta > 200 && delta < 340) return 'Turn left';
+        return 'Continue moving';
+    }
+
+    // Function to smoothly move the marker
+    function smoothMoveMarker(marker, fromLatLng, toLatLng, duration, callback) {
+        const startTime = performance.now();
+
+        function animate() {
+            const currentTime = performance.now();
+            const elapsed = currentTime - startTime;
+            const t = Math.min(elapsed / duration, 1); // Normalize to [0, 1]
+
+            const lat = fromLatLng[0] + (toLatLng[0] - fromLatLng[0]) * t;
+            const lng = fromLatLng[1] + (toLatLng[1] - fromLatLng[1]) * t;
+
+            marker.setLatLng([lat, lng]);
+
+            if (t < 1) {
+                requestAnimationFrame(animate);
+            } else if (callback) {
+                callback(); // Call the callback function after animation completes
+            }
+        }
+
+        animate();
+    }
+
+    // Main function to move the marker and update instructions
+    function move() {
+        if (index >= latlngs.length - 1) {
+            instructionBox.textContent = 'You have arrived at your destination!';
+            return;
+        }
+
+        const prevLatLng = latlngs[index];
+        const currentLatLng = latlngs[index + 1];
+        const nextLatLng = latlngs[index + 2] || currentLatLng;
+
+        // Calculate angles for direction
+        const prevAngle = calculateAngle(prevLatLng, currentLatLng);
+        const currentAngle = calculateAngle(currentLatLng, nextLatLng);
+        const instruction = getDirection(prevAngle, currentAngle);
+
+        // Update instruction only if it changes
+        if (instruction !== lastInstruction) {
+            instructionBox.textContent = instruction;
+            lastInstruction = instruction;
+        }
+
+        // **Increase the duration here to slow the animation**
+        const animationDuration = 2000; // Increase this value (in milliseconds) for slower animation
+
+        // Smoothly move the marker and then call move again
+        smoothMoveMarker(movingMarker, prevLatLng, currentLatLng, animationDuration, () => {
+            index++;
+            move();
+        });
+    }
+
+    move(); // Start moving the marker
+}
+   
+    </script>
+    </body>
+</html>
